@@ -57,7 +57,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_PEM }}
           port: 22
           source: ${{ env.SERVICE_NAME }}.tar
-          target: /opt
+          target: /home/ubuntu
 
       - name: Push to AWS-ECR
         env:
