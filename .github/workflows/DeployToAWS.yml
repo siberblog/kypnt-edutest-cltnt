@@ -45,7 +45,18 @@ jobs:
           pwd
           docker build --file Dockerfile --tag=${ECR_REGISTRY}/${REPO_NAME}:latest --rm=true .
           docker tag ${ECR_REGISTRY}/${REPO_NAME}:latest ${ECR_REGISTRY}/${REPO_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
+          docker save -o ${REPO_NAME}.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
           docker images
+
+      - name: scp docker image to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ env.AWS_EC2_PUBLIC_IP }}
+          username: ${{ env.AWS_EC2_USERNAME }}
+          key: ${{ secrets.AWS_EC2_PEM }}
+          port: 22
+          source: ${REPO_NAME}.tar
+          target: /opt
 
       - name: Push to AWS-ECR
         env:
@@ -57,30 +68,18 @@ jobs:
           docker push ${ECR_REGISTRY}/${REPO_NAME}:latest
           docker push ${ECR_REGISTRY}/${REPO_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
 
-      - name: Deploy to EC2
+      - name: Deploy to EC2 - executing remote ssh commands
+        uses: appleboy/ssh-action@master
         env:
-          AWS_EC2_PEM: ${{ secrets.AWS_EC2_PEM  }}
-          AWS_EC2_PUBLIC_IP: ${{ env.AWS_EC2_PUBLIC_IP }}
-          AWS_EC2_USERNAME: ${{ env.AWS_EC2_USERNAME }}
           AWS_REGION: ${{ env.AWS_REGION }}
           SERVICE_NAME: ${{ env.SERVICE_NAME }}
-          ECR_REGISTRY: ${{ steps.version.outputs.ECR_REGISTRY }}
-        run: |
-          echo "$AWS_EC2_PEM" > private_key.pem && chmod 400 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${AWS_EC2_USERNAME}@${AWS_EC2_PUBLIC_IP} '
-          echo "${ECR_REGISTRY} ${SERVICE_NAME} ${AWS_REGION}"
-          hostname
-          echo "File List"
-          ls -a
-          echo "PWD"
-          pwd
-          sudo docker ps -a
-          USER_ID=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep '"accountId"' | cut -d\" -f4)
-          echo "USERRRRR ${USER_ID}"
-          echo $(aws ecr get-authorization-token --region ${AWS_REGION} --output text --query 'authorizationData[].authorizationToken' | base64 -d | cut -d: -f2) | docker login -u AWS https://210329335172.dkr.ecr.eu-west-2.amazonaws.com --password-stdinsudo 
-          docker pull ${ECR_REGISTRY}/${SERVICE_NAME}:latest
-          sudo docker rm -f $(docker ps -aqf "name=${SERVICE_NAME}") || true
-          sudo docker run -d --name ${SERVICE_NAME} -p 90:80 ${ECR_REGISTRY}/${SERVICE_NAME}:latest
-          sudo docker ps -a
-          '
-          
+          ECR_REGISTRY: ${{ steps.version.outputs.ECR_REGISTRY }}          
+        with:
+          host: ${{ env.AWS_EC2_PUBLIC_IP }}
+          username: ${{ env.AWS_EC2_USERNAME }}
+          key: ${{ secrets.AWS_EC2_PEM }}
+          port: 22
+          script: |
+            docker ps -a
+            ls -la
+            printenv
