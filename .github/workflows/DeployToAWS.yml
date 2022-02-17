@@ -45,7 +45,7 @@ jobs:
           pwd
           docker build --file Dockerfile --tag=${ECR_REGISTRY}/${REPO_NAME}:latest --rm=true .
           docker tag ${ECR_REGISTRY}/${REPO_NAME}:latest ${ECR_REGISTRY}/${REPO_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
-          docker save -o ${REPO_NAME}.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
+          docker save -o $REPO_NAME.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
           docker images
 
       - name: scp docker image to EC2
@@ -55,7 +55,7 @@ jobs:
           username: ${{ env.AWS_EC2_USERNAME }}
           key: ${{ secrets.AWS_EC2_PEM }}
           port: 22
-          source: ${REPO_NAME}.tar
+          source: $REPO_NAME.tar
           target: /opt
 
       - name: Push to AWS-ECR
@@ -69,15 +69,12 @@ jobs:
           docker push ${ECR_REGISTRY}/${REPO_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
 
       - name: Deploy to EC2 - executing remote ssh commands
-        uses: appleboy/ssh-action@master
-        env:
-          AWS_REGION: ${{ env.AWS_REGION }}
-          SERVICE_NAME: ${{ env.SERVICE_NAME }}
-          ECR_REGISTRY: ${{ steps.version.outputs.ECR_REGISTRY }}          
+        uses: appleboy/ssh-action@master         
         with:
           host: ${{ env.AWS_EC2_PUBLIC_IP }}
           username: ${{ env.AWS_EC2_USERNAME }}
           key: ${{ secrets.AWS_EC2_PEM }}
+          overwrite: true
           port: 22
           script: |
             ls -ls /opt
