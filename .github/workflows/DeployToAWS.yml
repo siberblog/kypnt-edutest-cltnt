@@ -37,7 +37,7 @@ jobs:
           pwd
           docker build --file Dockerfile --tag=${ECR_REGISTRY}/${REPO_NAME}:latest --rm=true .
           docker tag ${ECR_REGISTRY}/${REPO_NAME}:latest ${ECR_REGISTRY}/${REPO_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
-          docker save -o ${REPO_NAME}.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
+          docker save -o edutest-fe-test.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
           ls -la
           docker images
 
@@ -54,7 +54,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_PEM }}
           port: 22
           overwrite: true
-          source: ${REPO_NAME}.tar
+          source: edutest-fe-test.tar
           target: /home/ubuntu
 
       - name: Push to AWS-ECR
