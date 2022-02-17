@@ -63,7 +63,7 @@ jobs:
           port: 22
           overwrite: true
           source: ${{ env.SERVICE_NAME }}.tar
-          target: /home/ubuntu
+          target: /home/ubuntu/docker_images/${{ env.SERVICE_NAME }}
           
       - name: Push to AWS-ECR
         env:
