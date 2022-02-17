@@ -84,3 +84,6 @@ jobs:
             pwd
             printenv
             sudo docker images
+            echo ${{ env.AWS_EC2_PUBLIC_IP }}
+            echo ${{ env.AWS_EC2_USERNAME }}
+            echo ${{ env.SERVICE_NAME }}
