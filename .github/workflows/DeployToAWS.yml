@@ -92,5 +92,5 @@ jobs:
             echo ${{ env.AWS_EC2_USERNAME }}
             echo ${{ env.SERVICE_NAME }}
             USER_ID=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep '"accountId"' | cut -d\" -f4)
-            aws ecr get-login-password --region ${{ env.AWS_REGION }}| docker login --username AWS --password-stdin ${USER_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+            sudo aws ecr get-login-password --region ${{ env.AWS_REGION }}| docker login --username AWS --password-stdin ${USER_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
                 
