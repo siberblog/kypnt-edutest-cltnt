@@ -56,7 +56,7 @@ jobs:
           username: ${{ env.AWS_EC2_USERNAME }}
           key: ${{ secrets.AWS_EC2_PEM }}
           port: 22
-          source: $REPO_NAME.tar
+          source: ${{ env.SERVICE_NAME }}.tar
           target: /opt
 
       - name: Push to AWS-ECR
