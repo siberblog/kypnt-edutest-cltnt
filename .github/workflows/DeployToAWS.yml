@@ -19,8 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Check
         env: 
-          TEST: ${{ secrets.TEST_ENV }}
-          
+          TEST: "aaaa ${{ secrets.TEST_ENV }} bbbb"
         run: |
             echo "${TEST}"
             echo "${{ env.SERVICE_NAME }}"
