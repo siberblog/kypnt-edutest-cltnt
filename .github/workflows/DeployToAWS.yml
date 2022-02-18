@@ -57,9 +57,7 @@ jobs:
           overwrite: true
           source: ${{ env.SERVICE_NAME }}.tar
           target: /home/ubuntu/docker_images/${{ env.SERVICE_NAME }}
-          script: |
-            ls -la 
-            mv "/home/ubuntu/docker_images/${{ env.SERVICE_NAME }}/${{ env.SERVICE_NAME }}.tar" '${{ env.SERVICE_NAME }}.v0.1.${RUN_NUMBER}-${SHA_SHORT}"
+          
           
       - name: Push to AWS-ECR
         env:
@@ -68,8 +66,12 @@ jobs:
           RUN_NUMBER: ${{ github.run_number }}
           SHA_SHORT: ${{ steps.version.outputs.sha_short }}
         run: |
+          ls -la "/home/ubuntu/docker_images/${{ env.SERVICE_NAME }}"
+          mv "/home/ubuntu/docker_images/${{ env.SERVICE_NAME }}/${{ env.SERVICE_NAME }}.tar" '${{ env.SERVICE_NAME }}.v0.1.${RUN_NUMBER}-${SHA_SHORT}"
+          ls -la "/home/ubuntu/docker_images/${{ env.SERVICE_NAME }}"
           docker push ${ECR_REGISTRY}/${REPO_NAME}:latest
           docker push ${ECR_REGISTRY}/${REPO_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
+          
       - name: Deploy to EC2 - executing remote ssh commands
         uses: appleboy/ssh-action@master
         with:
