@@ -77,15 +77,23 @@ jobs:
           key: ${{ secrets.AWS_EC2_PEM }}
           port: 22
           script: |
-            ls -ls /home/ubuntu
+            SERVICE_NAME=${{ env.SERVICE_NAME }}
+            AWS_REGION=${{ env.AWS_REGION }}
+            SERVICE_PORT=${{ env.SERVICE_PORT }}
+            LOGSTASH_URI=${{ env.LOGSTASH_URI }}
+            ECR_REGISTRY=${{ steps.version.outputs.ECR_REGISTRY }}
+            REPO_NAME=${{ env.SERVICE_NAME }}
+            RUN_NUMBER=${{ github.run_number }}
+            SHA_SHORT=${{ steps.version.outputs.sha_short }}
+            printenv
+            ls -ls /home/ubuntu/kps/$SERVICE_NAME
             sudo docker ps -a
             ls -la
-            pwd
-            printenv
             sudo docker images
             echo ${{ env.AWS_EC2_PUBLIC_IP }}
             echo ${{ env.AWS_EC2_USERNAME }}
             echo ${{ env.SERVICE_NAME }}
             USER_ID=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep '"accountId"' | cut -d\" -f4)
-            sudo aws ecr get-login-password --region ${{ env.AWS_REGION }}| docker login --username AWS --password-stdin ${USER_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+            echo $USER_ID
+            aws ecr get-login-password --region ${{ env.AWS_REGION }}| docker login --username AWS --password-stdin ${USER_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
                 
