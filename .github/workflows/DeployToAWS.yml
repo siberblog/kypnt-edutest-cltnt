@@ -36,14 +36,14 @@ jobs:
       - name: Build the Docker image
         env:
           ECR_REGISTRY: ${{ steps.version.outputs.ECR_REGISTRY }}
-          REPO_NAME: ${{ env.SERVICE_NAME }}
+          SERVICE_NAME: ${{ env.SERVICE_NAME }}
           RUN_NUMBER: ${{ github.run_number }}
           SHA_SHORT: ${{ steps.version.outputs.sha_short }}
         run: |
           pwd
-          docker build --file Dockerfile --tag=${ECR_REGISTRY}/${REPO_NAME}:latest --rm=true .
-          docker tag ${ECR_REGISTRY}/${REPO_NAME}:latest ${ECR_REGISTRY}/${REPO_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
-          docker save -o ${REPO_NAME}.v0.1.${RUN_NUMBER}-${SHA_SHORT}.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
+          docker build --file Dockerfile --tag=${ECR_REGISTRY}/${SERVICE_NAME}:latest --rm=true .
+          docker tag ${ECR_REGISTRY}/${SERVICE_NAME}:latest ${ECR_REGISTRY}/${SERVICE_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
+          docker save -o ${SERVICE_NAME}.v0.1.${RUN_NUMBER}-${SHA_SHORT}.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
           ls -la
           docker images
           
@@ -62,12 +62,12 @@ jobs:
       - name: Push to AWS-ECR
         env:
           ECR_REGISTRY: ${{ steps.version.outputs.ECR_REGISTRY }}
-          REPO_NAME: ${{ env.SERVICE_NAME }}
+          SERVICE_NAME: ${{ env.SERVICE_NAME }}
           RUN_NUMBER: ${{ github.run_number }}
           SHA_SHORT: ${{ steps.version.outputs.sha_short }}
         run: |
-          docker push ${ECR_REGISTRY}/${REPO_NAME}:latest
-          docker push ${ECR_REGISTRY}/${REPO_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
+          docker push ${ECR_REGISTRY}/${SERVICE_NAME}:latest
+          docker push ${ECR_REGISTRY}/${SERVICE_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
           
       - name: Deploy to EC2 - executing remote ssh commands
         uses: appleboy/ssh-action@master
@@ -84,7 +84,5 @@ jobs:
             ECR_REGISTRY=${{ steps.version.outputs.ECR_REGISTRY }}
             RUN_NUMBER=${{ github.run_number }}
             SHA_SHORT=${{ steps.version.outputs.sha_short }}
-            sudo su
-            aws --version
-            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
+            aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin ${ECR_REGISTRY}
                 
