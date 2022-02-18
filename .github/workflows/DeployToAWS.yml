@@ -86,7 +86,7 @@ jobs:
             SHA_SHORT=${{ steps.version.outputs.sha_short }}
             echo $ECR_REGISTRY
             echo $AWS_REGION
-            USER_ID=curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep '"accountId"' | cut -d\" -f4
-            echo $USER_ID
+            sudo USER_ID=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep '"accountId"' | cut -d\" -f4)
+            sudo echo $USER_ID
             aws ecr get-login-password --region ${AWS_REGION}| docker login --username AWS --password-stdin ${USER_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
                 
