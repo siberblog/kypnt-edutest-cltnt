@@ -43,7 +43,7 @@ jobs:
           pwd
           docker build --file Dockerfile --tag=${ECR_REGISTRY}/${REPO_NAME}:latest --rm=true .
           docker tag ${ECR_REGISTRY}/${REPO_NAME}:latest ${ECR_REGISTRY}/${REPO_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
-          docker save -o ${REPO_NAME}.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
+          docker save -o ${REPO_NAME}.v0.1.${RUN_NUMBER}-${SHA_SHORT}.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
           ls -la
           docker images
           
@@ -55,7 +55,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_PEM }}
           port: 22
           overwrite: true
-          source: ${{ env.SERVICE_NAME }}.tar
+          source: "*.tar"
           target: /home/ubuntu/docker_images/${{ env.SERVICE_NAME }}
           
           
@@ -77,9 +77,6 @@ jobs:
           key: ${{ secrets.AWS_EC2_PEM }}
           port: 22
           script: |
-            ls -la "/home/ubuntu/docker_images/${{ env.SERVICE_NAME }}"
-            mv "/home/ubuntu/docker_images/${{ env.SERVICE_NAME }}/${{ env.SERVICE_NAME }}.tar" '${{ env.SERVICE_NAME }}.v0.1.${RUN_NUMBER}-${SHA_SHORT}"
-            ls -la "/home/ubuntu/docker_images/${{ env.SERVICE_NAME }}"
             ls -ls /home/ubuntu
             sudo docker ps -a
             ls -la
