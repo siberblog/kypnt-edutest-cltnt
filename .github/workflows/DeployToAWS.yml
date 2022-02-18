@@ -84,5 +84,6 @@ jobs:
             ECR_REGISTRY=${{ steps.version.outputs.ECR_REGISTRY }}
             RUN_NUMBER=${{ github.run_number }}
             SHA_SHORT=${{ steps.version.outputs.sha_short }}
-            sudo aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
+            aws --version
+            aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin ${ECR_REGISTRY}
                 
