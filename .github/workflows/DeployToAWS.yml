@@ -86,6 +86,6 @@ jobs:
             sudo docker pull ${ECR_REGISTRY}/${SERVICE_NAME}:latest
             sudo docker images
             sudo docker rm -f $(sudo docker ps -aqf "name=${SERVICE_NAME}") || true
-            sudo docker run -d --rm --log-driver=gelf --log-opt gelf-address=${LOGSTASH_URI} --name=${SERVICE_NAME} --publish=8080:${SERVICE_PORT} --volume=${SERVICE_NAME}-vol:/var/lib/${SERVICE_NAME}/${SERVICE_NAME}-vol ${ECR_REGISTRY}/${SERVICE_NAME}:latest
+            sudo docker run -d --rm --log-driver=gelf --log-opt gelf-address=${LOGSTASH_URI} --name=${SERVICE_NAME} --publish=${SERVICE_PORT}:${SERVICE_PORT} --volume=${SERVICE_NAME}-vol:/var/lib/${SERVICE_NAME}/${SERVICE_NAME}-vol ${ECR_REGISTRY}/${SERVICE_NAME}:latest
             sudo docker ps -a
             
