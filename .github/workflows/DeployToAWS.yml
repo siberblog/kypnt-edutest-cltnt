@@ -22,7 +22,7 @@ jobs:
             echo "${{ env.SERVICE_NAME }}"
             echo "${{ env.AWS_EC2_PUBLIC_IP }}"
             echo "${{ env.AWS_REGION }}"
-            ECHO "${ secrets.TEST_ENV }}"
+            ECHO "${ env.TEST_ENV }}"
             echo " "
             printenv
             echo " "
