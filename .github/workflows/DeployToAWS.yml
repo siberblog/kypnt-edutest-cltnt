@@ -82,12 +82,10 @@ jobs:
             SERVICE_PORT=${{ env.SERVICE_PORT }}
             LOGSTASH_URI=${{ env.LOGSTASH_URI }}
             ECR_REGISTRY=${{ steps.version.outputs.ECR_REGISTRY }}
-            RUN_NUMBER=${{ github.run_number }}
-            SHA_SHORT=${{ steps.version.outputs.sha_short }}
             aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin ${ECR_REGISTRY}
             sudo docker pull ${ECR_REGISTRY}/${SERVICE_NAME}:latest
             sudo docker images
             sudo docker rm -f $(sudo docker ps -aqf "name=${SERVICE_NAME}") || true
-            sudo docker run --log-driver=gelf --log-opt gelf-address=${LOGSTASH_URI} --name=${SERVICE_NAME} --publish=8080:${SERVICE_PORT} --volume=${SERVICE_NAME}-vol:/var/lib/${SERVICE_NAME}/${SERVICE_NAME}-vol ${ECR_REGISTRY}/${SERVICE_NAME}:latest sh
+            sudo docker run -d --rm --log-driver=gelf --log-opt gelf-address=${LOGSTASH_URI} --name=${SERVICE_NAME} --publish=8080:${SERVICE_PORT} --volume=${SERVICE_NAME}-vol:/var/lib/${SERVICE_NAME}/${SERVICE_NAME}-vol ${ECR_REGISTRY}/${SERVICE_NAME}:latest
             sudo docker ps -a
             
