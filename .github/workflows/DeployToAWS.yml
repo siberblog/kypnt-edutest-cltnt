@@ -13,17 +13,16 @@ on:
 jobs:
   merge_job:
     name: Build, Push and Deploy
-    environment: KPSa
+    environment: KPS
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Check
         run: |
             echo "${{ env.SERVICE_NAME }}"
-            echo "${{ env.SERVICE_NAME }}"
             echo "${{ env.AWS_EC2_PUBLIC_IP }}"
             echo "${{ env.AWS_REGION }}"
-            printenv TEST_ENV
+            ECHO "${ secrets.TEST_ENV }}"
             echo " "
             printenv
             echo " "
