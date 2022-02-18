@@ -55,7 +55,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_PEM }}
           port: 22
           overwrite: true
-          source: "*.tar"
+          source: "*"
           target: /home/ubuntu/docker_images/${{ env.SERVICE_NAME }}
           
       - name: Push to AWS-ECR
