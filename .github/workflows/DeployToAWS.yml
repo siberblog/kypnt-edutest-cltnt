@@ -13,23 +13,9 @@ on:
 jobs:
   merge_job:
     name: Build, Push and Deploy
-    environment: KPS
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check
-        env: 
-          TEST: "aaaa ${{ secrets.TEST_ENV }} bbbb"
-        run: |
-            echo "${TEST}"
-            echo "${{ env.SERVICE_NAME }}"
-            echo "${{ env.AWS_EC2_PUBLIC_IP }}"
-            echo "${{ env.AWS_REGION }}"
-            echo " "
-            printenv
-            echo " "
-            KPS="Test env vars for python"
-        
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -57,7 +43,7 @@ jobs:
           pwd
           docker build --file Dockerfile --tag=${ECR_REGISTRY}/${REPO_NAME}:latest --rm=true .
           docker tag ${ECR_REGISTRY}/${REPO_NAME}:latest ${ECR_REGISTRY}/${REPO_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
-          docker save -o ${REPO_NAME}.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
+          docker save -o ${REPO_NAME}v0.1.${RUN_NUMBER}-${SHA_SHORT}.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
           ls -la
           docker images
           
@@ -69,7 +55,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_PEM }}
           port: 22
           overwrite: true
-          source: ${{ env.SERVICE_NAME }}.tar
+          source: "${{ env.SERVICE_NAME }}.v0.1.${{ github.run_number }}-${{ steps.version.outputs.sha_short }}.tar"
           target: /home/ubuntu/docker_images/${{ env.SERVICE_NAME }}
           
       - name: Push to AWS-ECR
