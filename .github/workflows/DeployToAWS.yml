@@ -88,3 +88,4 @@ jobs:
             sudo docker pull ${ECR_REGISTRY}/${SERVICE_NAME}:latest
             sudo docker images
             sudo docker rm -f $(sudo docker ps -aqf "name=${SERVICE_NAME}") || true
+            sudo docker run -d --name ${SERVICE_NAME} -p ${SERVICE_PORT}:${SERVICE_PORT} ${ECR_REGISTRY}/${SERVICE_NAME}:latest
