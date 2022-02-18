@@ -43,7 +43,7 @@ jobs:
           pwd
           docker build --file Dockerfile --tag=${ECR_REGISTRY}/${SERVICE_NAME}:latest --rm=true .
           docker tag ${ECR_REGISTRY}/${SERVICE_NAME}:latest ${ECR_REGISTRY}/${SERVICE_NAME}:v0.1.${RUN_NUMBER}-${SHA_SHORT}
-          docker save -o ${SERVICE_NAME}.v0.1.${RUN_NUMBER}-${SHA_SHORT}.tar ${ECR_REGISTRY}/${REPO_NAME}:latest
+          docker save -o ${SERVICE_NAME}.v0.1.${RUN_NUMBER}-${SHA_SHORT}.tar ${ECR_REGISTRY}/${SERVICE_NAME}:latest
           ls -la
           docker images
           
