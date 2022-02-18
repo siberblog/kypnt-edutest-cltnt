@@ -13,7 +13,7 @@ on:
 jobs:
   merge_job:
     name: Build, Push and Deploy
-    environment: KPS
+    environment: KPS_ABC
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,7 +22,6 @@ jobs:
             echo "${{ env.SERVICE_NAME }}"
             echo "${{ env.AWS_EC2_PUBLIC_IP }}"
             echo "${{ env.AWS_REGION }}"
-            ECHO "${ env.TEST_ENV }}"
             echo " "
             printenv
             echo " "
