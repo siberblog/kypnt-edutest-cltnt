@@ -19,6 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Check
         run: |
+            echo "${{ kps.secrets.TEST_ENV }}"
             echo "${{ env.SERVICE_NAME }}"
             echo "${{ env.AWS_EC2_PUBLIC_IP }}"
             echo "${{ env.AWS_REGION }}"
