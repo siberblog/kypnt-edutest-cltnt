@@ -85,4 +85,5 @@ jobs:
             RUN_NUMBER=${{ github.run_number }}
             SHA_SHORT=${{ steps.version.outputs.sha_short }}
             aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin ${ECR_REGISTRY}
-                
+            sudo docker pull ${ECR_REGISTRY}/${SERVICE_NAME}:latest
+            sudo docker images
