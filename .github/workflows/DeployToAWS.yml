@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Check
-        env: |
+        env: 
           TEST: ${{ kps.secrets.TEST_ENV }}
           
         run: |
