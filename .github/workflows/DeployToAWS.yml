@@ -81,7 +81,7 @@ jobs:
             SERVICE_PORT=${{ env.SERVICE_PORT }}
             LOGSTASH_URI=${{ env.LOGSTASH_URI }}
             ECR_REGISTRY=${{ steps.version.outputs.ECR_REGISTRY }}
-            sudo docker images --filter=${ECR_REGISTRY}/${SERVICE_NAME} --quiet
+            sudo docker images --filter=${SERVICE_NAME} --quiet
             OLD_DOCKER_IMAGE_ID=sudo docker images --filter=${ECR_REGISTRY}/${SERVICE_NAME} --quiet
             echo ${OLD_DOCKER_IMAGE_ID} ${OLD_DOCKER_IMAGE_ID} ${OLD_DOCKER_IMAGE_ID} ${OLD_DOCKER_IMAGE_ID}
             aws ecr get-login-password --region ${AWS_REGION} | sudo docker login --username AWS --password-stdin ${ECR_REGISTRY}
