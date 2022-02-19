@@ -88,6 +88,5 @@ jobs:
             sudo docker rm -f $(sudo docker ps -aqf "name=${SERVICE_NAME}") || true
             sudo docker run -d --log-driver=gelf --log-opt gelf-address=${LOGSTASH_URI} --name=${SERVICE_NAME} --publish=8080:${SERVICE_PORT} --volume=${SERVICE_NAME}-vol:/var/lib/${SERVICE_NAME}/${SERVICE_NAME}-vol ${ECR_REGISTRY}/${SERVICE_NAME}:latest
             sudo docker rmi $(docker images -f "dangling=true" -q) || true
-            cd /home/ubuntu/kps/fe-web
-            rm -R html || true
-            sudo docker cp edutest-fe:/usr/share/nginx/html/ . | aws s3 cp html/ s3://kps-exam/ --recursive
+            sudo rm -R /home/ubuntu/kps/fe-web/html || true
+            sudo docker cp edutest-fe:/usr/share/nginx/html/ /home/ubuntu/kps/fe-web | aws s3 cp /home/ubuntu/kps/fe-web/html/ s3://kps-exam/ --recursive || true
